@@ -28,7 +28,41 @@ for file in os.listdir(reportPath):
             if name is None:
                 break
             content = sheet.cell(row = row, column = col+1).value
-            reports.append({"name" : name,"content" : content})
+            reports.append({"name" : name,"content" : content}) # 이렇게 하면 자동으로 구조체가 형성되는건가? append가 단순 문자열 합치기는 아닌가?
             row +=1
 
-print(reports)
+
+NameList = {} # [] {}
+newRow = 0
+
+wb = xl.load_workbook(os.path.join(reportPath,"20200103.xlsx"))
+sheet = wb.active
+
+row = 3
+while 1:
+    name = sheet.cell(row = row, column = col).value
+    if name is None:
+        newRow = row
+        break
+
+    NameList[name] = row  #[name] == C++ Temp[row] = name 인
+    row += 1
+
+
+col = 1
+for r in reports:
+    row = NameList.get(r["name"] , -1) # tame[n] == "name" 있으면, 인덱스 반환 없으면 -1
+    if row == -1:
+        row = newRow
+        newRow += 1
+
+
+    sheet.cell(row = row , column = col).value = r["name"]
+    sheet.cell(row = row , column = col+1).value = r["content"]
+
+wb.save(os.path.join(reportPath,"20200104.xlsx"))
+
+
+"""
+1. 파이썬에서 append의 의미는 무엇인가?
+"""
